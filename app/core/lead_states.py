@@ -62,3 +62,30 @@ TERMINAL_STATES = {
     LeadState.OPTED_OUT,
     LeadState.DISQUALIFIED,
 }
+
+# ... (all your existing code above)
+
+# Add this at the very end:
+TRANSITIONS = {
+    # Prospecting pipeline
+    (LeadState.NEW, LeadEvent.VALIDATION_PASSED): LeadState.VALIDATED,
+    (LeadState.NEW, LeadEvent.VALIDATION_FAILED): LeadState.REJECTED,
+    (LeadState.NEW, LeadEvent.DUPLICATE_FOUND): LeadState.DUPLICATE,
+    
+    (LeadState.VALIDATED, LeadEvent.SCORE_COMPUTED): LeadState.SCORED,
+    (LeadState.SCORED, LeadEvent.QUEUED_FOR_OUTREACH): LeadState.QUEUED,
+    
+    # Outreach
+    (LeadState.QUEUED, LeadEvent.MESSAGE_SENT): LeadState.CONTACTED,
+    (LeadState.CONTACTED, LeadEvent.REPLY_RECEIVED): LeadState.REPLIED,
+    (LeadState.CONTACTED, LeadEvent.SEQUENCE_EXHAUSTED): LeadState.NO_RESPONSE,
+    (LeadState.CONTACTED, LeadEvent.OPT_OUT): LeadState.OPTED_OUT,
+    
+    # Qualification
+    (LeadState.REPLIED, LeadEvent.QUALIFICATION_STARTED): LeadState.QUALIFYING,
+    (LeadState.QUALIFYING, LeadEvent.BANT_COMPLETE): LeadState.QUALIFIED,
+    (LeadState.QUALIFYING, LeadEvent.BANT_FAILED): LeadState.DISQUALIFIED,
+    
+    # Handoff
+    (LeadState.QUALIFIED, LeadEvent.CRM_SYNCED): LeadState.HANDED_OFF,
+}
