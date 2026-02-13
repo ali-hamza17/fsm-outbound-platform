@@ -35,6 +35,9 @@ class Lead(Base):
     last_name = Column(String(100), nullable=True)
     company = Column(String(255), nullable=True)
     
+    title = Column(String(255), nullable=True)
+    industry = Column(String(100), nullable=True)
+    
     # FSM state - THE SINGLE SOURCE OF TRUTH
     state = Column(String(50), nullable=False, default="NEW")
     state_entered_at = Column(DateTime(timezone=True), default=utcnow)
